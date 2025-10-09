@@ -1,0 +1,47 @@
+Notes about Lecture
+
+- It's good to have some model (regression, or any other models) for which we can have a some
+visual representation for. Like graphs or tables maybe.
+
+- Should include a good data manipulation techniques
+    Maybe changing something into factor and doing an analysis
+    Or Changing some variable into ranges like the `updiv.num` was in the background?
+  
+- Editing a report file could also be a task!
+
+- Reports should be something original, do not replicate! Reports should be short and new stuff.
+
+
+
+Ideas for questions or themes to Explore
+  Total observations: 51
+  upper division class distribution:
+    9+ = 27
+    6-8 = 14
+    3-5 = 8
+    0-2 = 2
+    
+    - Whether having a specific domain restricts you in your preferances for the project?
+      - response variable: preferance
+      - predictive variables: number of upper div classes, research exp, dom 
+      
+      Have a table with all variables (one on x axis, one on y axis) / summary statistic
+      Have some sort of multiple boxplots / dotplot or smth like this
+      Logistic regression
+      KNN 
+      
+      
+    - Comfort level vs proficiency for each (one-to-one: math prof --> math comf etc)
+    Is there a significant difference between means of comfort level vs proficiency level across
+    all three areas
+    
+      We could do some statistical testing and have p values to check whether there is a diff
+        Present the results in a table where conf interval and p values and alpha values are there
+        also talk about type 1 and type 2 errors??
+  
+  
+Agreed method of Communication
+  Texting works best
+  
+
+Duties
