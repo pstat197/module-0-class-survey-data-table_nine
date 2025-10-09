@@ -15,6 +15,7 @@ visual representation for. Like graphs or tables maybe.
 
 Ideas for questions or themes to Explore
   Total observations: 51
+  
   upper division class distribution:
     9+ = 27
     6-8 = 14
@@ -25,7 +26,8 @@ Ideas for questions or themes to Explore
       - response variable: preferance
       - predictive variables: number of upper div classes, research exp, dom 
       
-      Have a table with all variables (one on x axis, one on y axis) / summary statistic
+      Have a table with all variables (one on x axis, one on y axis, one in different color) 
+      / summary statistic table?
       Have some sort of multiple boxplots / dotplot or smth like this
       Logistic regression
       KNN 
@@ -38,6 +40,13 @@ Ideas for questions or themes to Explore
       We could do some statistical testing and have p values to check whether there is a diff
         Present the results in a table where conf interval and p values and alpha values are there
         also talk about type 1 and type 2 errors??
+        
+      Taking a step further merge levels: difference in comf level vs proficiency level 
+      what is below the mean and what is above the mean: whether that difference reflects
+      the number of upper div classes taken: at least 6 or less than 6. Mention that in report
+      
+      The comf levels and prof levels are on different levels so we need to standardize:
+        subtract mean and divide by sd
   
   
 Agreed method of Communication
@@ -45,3 +54,23 @@ Agreed method of Communication
   
 
 Duties
+Writing report 
+taking the mean of everything
+creating difference variable
+ANOVA testing
+t test 
+use knit kable for table representation of p values, conf intervals, type 1 & 2. errors etc
+standadize variables
+ggplot (making group boxplots 3 graphs)
+taking it a step further:
+  collapsing level
+  seeing whether there is correlation
+
+
+Aarti: 
+
+Calder:
+
+Kaitlyn:
+
+Sophie: 
