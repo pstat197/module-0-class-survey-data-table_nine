@@ -68,10 +68,10 @@ taking it a step further:
   seeing whether there is correlation
 
 
-Aarti: 
+Aarti: Standardize test and creating a difference variable, ggplot
 
-Calder:
+Calder: Summary stats table and writing report
+ Summary stats table - maximums, mins, means median and percentiles
 
-Kaitlyn:
-
-Sophie: 
+Kaitlyn and Sophie: ANOVA testing, t test 
+use knit kable for table representation of p values, conf intervals, type 1 & 2. errors etc
