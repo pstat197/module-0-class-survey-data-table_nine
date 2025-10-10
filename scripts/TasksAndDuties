@@ -69,10 +69,11 @@ taking it a step further:
   seeing whether there is correlation
 
 
-Aarti: Writing report, standardize variables and creating difference variables, ggplots
+Aarti: standardize variables and creating difference variables, ggplots
 
-Calder:
+Calder: Summary Table, writing report
 
-Kaitlyn:
-
-Sophie: 
+Kaitlyn and Sophie: ANOVA testing / t-testing, knit tables, explanation of p values and 
+                    conf internval, type 1 and type 2 errors, maybe just talk about how
+                    we can take things further (we don't have to do it, but mentioning it
+                    will be a good idea I think??)
