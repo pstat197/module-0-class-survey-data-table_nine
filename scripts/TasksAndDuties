@@ -69,10 +69,11 @@ taking it a step further:
   seeing whether there is correlation
 
 
-Aarti: standardize variables and creating difference variables, ggplots
+Aarti: creating num.prof variables, standardize variables and creating difference variables, 
+       ggplots + interpretations
 
 Calder: Summary Table of the difference variables, writing report that adheres to the canvas guidelines
-        Caption for each picture and table
+        Captions and interpretations (results) for each picture and table
 
 Kaitlyn and Sophie: ANOVA testing / t-testing, knit tables, explanation of p values and 
                     conf internval, type 1 and type 2 errors, maybe just talk about how
