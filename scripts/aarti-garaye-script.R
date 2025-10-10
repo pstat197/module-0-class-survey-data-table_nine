@@ -95,7 +95,7 @@ ggplot(background_long, aes(x = domain, y = value, fill = measure)) +
     y = "Standardized Value (Z-score)",
     fill = "Subject Area"
   ) +
-  theme_minimal()
+  theme_bw()
 
 # Boxplots of differences 
 # directly show whether people generally over- or underestimate their ability.
@@ -116,7 +116,7 @@ ggplot(diff_long, aes(x = domain, y = difference, fill = domain)) +
     x = "Domain",
     y = "Comfort – Proficiency (Z-score Difference)"
   ) +
-  theme_minimal()
+  theme_bw()
 
 
 # Interpretation of Plot 1: Standardized Proficiency vs Comfort by Domain
