@@ -1,42 +1,43 @@
-# T-test:
-
+# Linear Transformation of Proficiency to be on the same scale as Comfort
+# rescale prof (1-3) to 1-5
 background <- background %>%
-  mutate(
-    diff.math = std.math.comf - std.math.prof,
-    diff.stat = std.stat.comf - std.stat.prof,
-    diff.prog = std.prog.comf - std.prog.prof
-  )
+  mutate(prof_rescaled_math = (new.math.prof - 1) / (3 - 1) * (5 - 1) + 1,
+         prof_rescaled_stat = (new.stat.prof - 1) / (3 - 1) * (5 - 1) + 1,
+         prof_rescaled_prog = (new.prog.prof - 1) / (3 - 1) * (5 - 1) + 1)
 
+# compute raw difference (rescaled proficiency minus comfort)
+math_diff   <- background$prof_rescaled_math - background$math.comf
+stat_diff   <- background$prof_rescaled_stat - background$stat.comf
+prog_diff   <- background$prof_rescaled_prog - background$prog.comf
 
-t_math <- t.test(background$diff.math, mu = 0)
-t_stat <- t.test(background$diff.stat, mu = 0)
-t_prog <- t.test(background$diff.prog, mu = 0)
+# build long data and run repeated-measures ANOVA
+anova_data <- data.frame(
+  participant = seq_len(nrow(background)),
+  math = math_diff,
+  stats = stat_diff,
+  prog = prog_diff
+)
 
+library(tidyr)
+library(dplyr)
+long_data <- anova_data %>%
+  pivot_longer(cols = c(math, stats, prog),
+               names_to = "domain",
+               values_to = "diff")
 
-library(knitr)
-kable(t_results, digits = 3, caption = 
-        "One-sample t-tests for comfort–proficiency differences by domain")
+aov_result <- aov(diff ~ domain, data = long_data)
+summary(aov_result)
 
-# need to make not round to 0 for mean_difference and t_statistic
-# interpret values
+TukeyHSD(aov_result)
 
+#ANOVA Assumption Checking
 
+# Normality
+qqnorm()
+qqline()
 
+# QQ plot
 
-# ANOVA Test:
-diff_long <- background %>%
-  select(diff.math, diff.stat, diff.prog) %>%
-  pivot_longer(
-    cols = everything(),
-    names_to = "domain",
-    values_to = "difference"
-  )
-
-
-anova_model <- aov(difference ~ domain, data = diff_long)
-summary(anova_model)
-
-
-TukeyHSD(anova_model)
+# Residuals vs. Fitted plot
 
 # interpret values
