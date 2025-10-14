@@ -80,6 +80,28 @@ prog_diff_standardized
 math_diff_standardized
 stat_diff_standardized
 
+# Tidying Dataset
+library(dplyr)
+library(tidyr)
+
+anova_data <- data.frame(
+  participant = 1:nrow(background),  # create an ID for each participant
+  math = as.numeric(math_diff_standardized),
+  stats = as.numeric(stat_diff_standardized),
+  prog = as.numeric(prog_diff_standardized)
+)
+
+long_data <- anova_data %>%
+  pivot_longer(cols = c(math, stats, prog),
+               names_to = "domain",
+               values_to = "std_diff")
+
+aggregate(std_diff ~ domain, data = long_data, mean)
+aggregate(std_diff ~ domain, data = long_data, sd)
+
+summary_aov <- summary(aov(std_diff ~ domain, data=long_data))
+summary_aov
+
 #ANOVA Assumption Checking
 
 # Normality
@@ -91,3 +113,31 @@ qqline()
 # Residuals vs. Fitted plot
 
 # interpret values
+# rescale prof (1-3) to 1-5
+background <- background %>%
+  mutate(prof_rescaled_math = (new.math.prof - 1) / (3 - 1) * (5 - 1) + 1,
+         prof_rescaled_stat = (new.stat.prof - 1) / (3 - 1) * (5 - 1) + 1,
+         prof_rescaled_prog = (new.prog.prof - 1) / (3 - 1) * (5 - 1) + 1)
+
+# compute raw difference (rescaled proficiency minus comfort)
+math_diff   <- background$prof_rescaled_math - background$math.comf
+stat_diff   <- background$prof_rescaled_stat - background$stat.comf
+prog_diff   <- background$prof_rescaled_prog - background$prog.comf
+
+# build long data and run repeated-measures ANOVA
+anova_data <- data.frame(
+  participant = seq_len(nrow(background)),
+  math = math_diff,
+  stats = stat_diff,
+  prog = prog_diff
+)
+
+library(tidyr); library(dplyr)
+long_data <- anova_data %>%
+  pivot_longer(cols = c(math, stats, prog),
+               names_to = "domain",
+               values_to = "diff")
+
+# RM ANOVA
+aov_result <- aov(diff ~ domain + Error(participant/domain), data = long_data)
+summary(aov_result)
