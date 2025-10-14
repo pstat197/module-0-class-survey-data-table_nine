@@ -48,13 +48,37 @@ summary(anova_model)
 TukeyHSD(anova_model)
 
 # Standardizing Process
-prog_diff <- background$prog.prof - background$prog.comf
-math_diff <- background$math.prof - background$math.comf
-stat_diff <- background$stat.prof - background$stat.comf
+background <- background %>%
+  mutate(new.prog.prof = case_when(
+    prog.prof == "beg" ~ 1,
+    prog.prof == "int" ~ 2,
+    prog.prof == "adv" ~ 3
+  ))
+
+background <- background %>%
+  mutate(new.stat.prof = case_when(
+    stat.prof == "beg" ~ 1,
+    stat.prof == "int" ~ 2,
+    stat.prof == "adv" ~ 3
+  ))
+
+background <- background %>%
+  mutate(new.math.prof = case_when(
+    math.prof == "beg" ~ 1,
+    math.prof == "int" ~ 2,
+    math.prof == "adv" ~ 3
+  ))
+prog_diff <- background$new.prog.prof - background$prog.comf
+math_diff <- background$new.math.prof - background$math.comf
+stat_diff <- background$new.stat.prof - background$stat.comf
 
 prog_diff_standardized <- scale(prog_diff)
 math_diff_standardized <- scale(math_diff)
 stat_diff_standardized <- scale(stat_diff)
+
+prog_diff_standardized
+math_diff_standardized
+stat_diff_standardized
 
 #ANOVA Assumption Checking
 
