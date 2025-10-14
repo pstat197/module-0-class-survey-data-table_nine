@@ -56,7 +56,8 @@ Agreed method of Communication
 
 Duties
 Writing report 
-taking the mean of everything
+taking the mean of everything 
+summary stat table
 creating difference variable
 ANOVA testing
 t test 
@@ -68,20 +69,13 @@ taking it a step further:
   seeing whether there is correlation
 
 
-<<<<<<< HEAD
-Aarti: Standardize test and creating a difference variable, ggplot
-=======
-Aarti: Writing report, standardize test and creating a difference variable, ggplot
->>>>>>> f44ee19fb20523f3bf044434c4d6b944e5ca374b
+Aarti: creating num.prof variables, standardize variables and creating difference variables, 
+       ggplots + interpretations
 
-Calder: Summary stats table and writing report
- Summary stats table - maximums, mins, means median and percentiles
+Calder: Summary Table of the difference variables, writing report that adheres to the canvas guidelines
+        Captions and interpretations (results) for each picture and table
 
-<<<<<<< HEAD
-Kaitlyn and Sophie: ANOVA testing, t test 
-use knit kable for table representation of p values, conf intervals, type 1 & 2. errors etc
-=======
-Kaitlyn: ANOVA/t test, knit table
-
-Sophie: ANOVA/t test, knit table
->>>>>>> f44ee19fb20523f3bf044434c4d6b944e5ca374b
+Kaitlyn and Sophie: ANOVA testing / t-testing, knit tables, explanation of p values and 
+                    conf interval, type 1 and type 2 errors, maybe just talk about how
+                    we can take things further (we don't have to do it, but mentioning it
+                    will be a good idea I think??)
