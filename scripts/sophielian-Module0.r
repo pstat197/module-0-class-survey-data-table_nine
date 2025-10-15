@@ -62,8 +62,7 @@ shapiro.test(aov_result$residuals)
 
 
 
-
-# Residuals vs. Fitted plot
+# Equal Variances:
 
 plot(aov_result$residuals ~ aov_result$fitted.values)
 
@@ -73,6 +72,15 @@ plot(aov_result$residuals ~ aov_result$fitted.values)
 # around 0. This indicates that they have approximately equal variances, 
 # satisfying the ANOVA assumption.
 
+
+
+# Independence:
+
+# The assumption of independence is reasonably met because each observations
+# (student response) in the dataset is independent of others. The survey was 
+# distributed to all students in the class, and each student completed it 
+# individually. There is no indication that responses were influenced by or 
+# dependent on other participants' responses.
 
 
 
