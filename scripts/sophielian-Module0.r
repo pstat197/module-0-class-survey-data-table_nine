@@ -28,11 +28,42 @@ long_data <- anova_data %>%
 aov_result <- aov(diff ~ domain, data = long_data)
 summary(aov_result)
 
-# Interpretation of results
-
 TukeyHSD(aov_result)
 
-# Interpretation of finding which two domain means differ from one another
+# Interpretation of Results:
+
+# Because we got a p-value of 0.179 from our ANOVA, we fail to reject our null
+# hypothesis, and we conclude that there is no statistically significant evidence 
+# that there is a difference among the mean differences in comfort and proficiency 
+# scores across math, statistics, and programming.
+
+# In regard to the Tukey test, because all p-values were greater than 0.05, we
+# cannot conclude that any pair of means were significant against each other.
+# The confidence intervals all include 0, which shows us that none of the domain
+# gaps differ significantly from each other.
+
+library(dplyr)
+
+ci_results <- long_data %>%
+  group_by(domain) %>%
+  summarise(
+    mean_diff = mean(diff),
+    sd = sd(diff),
+    n = n(),
+    se = sd / sqrt(n),
+    lower_CI = mean_diff - qt(0.975, df = n - 1) * se,
+    upper_CI = mean_diff + qt(0.975, df = n - 1) * se
+  )
+
+knitr::kable(ci_results, digits = 3, caption = 
+               "95% Confidence Intervals for Comfort–Proficiency Differences by Domain")
+
+
+# The 95% confidence intervals for all three domains include 0, suggesting that 
+# there is no statistically significant difference between students’ comfort and 
+# proficiency levels in any of the areas. This aligns with the ANOVA results 
+# (p = 0.179) and the non-significant Tukey post-hoc test results.
+
 
 
 
@@ -77,10 +108,8 @@ plot(aov_result$residuals ~ aov_result$fitted.values)
 # Independence:
 
 # The assumption of independence is reasonably met because each observations
-# (student response) in the dataset is independent of others. The survey was 
-# distributed to all students in the class, and each student completed it 
-# individually. There is no indication that responses were influenced by or 
-# dependent on other participants' responses.
-
+# (student response) in the dataset is independent of others. 
+# Also, each participant's score is on a scale of how proficient/comfortable they 
+# are in each subject which is independent of any other participant's scores.
 
 
