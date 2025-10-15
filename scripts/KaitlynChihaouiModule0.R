@@ -1,118 +1,4 @@
-# T-test:
-
-background <- background %>%
-  mutate(
-    diff.math = std.math.comf - std.math.prof,
-    diff.stat = std.stat.comf - std.stat.prof,
-    diff.prog = std.prog.comf - std.prog.prof
-  )
-
-
-t_math <- t.test(background$diff.math, mu = 0)
-t_stat <- t.test(background$diff.stat, mu = 0)
-t_prog <- t.test(background$diff.prog, mu = 0)
-
-
-#t-tests one-to-one for each mean
-t_math_to_stat <- t.test(background$diff.math, background$diff.stat)
-t_stat_to_prog <- t.test(background$diff.stat, background$diff.prog)
-t_prog_to_math <- t.test(background$diff.prog, background$diff.math)
-
-library(knitr)
-kable()
-
-library(knitr)
-kable(t_results, digits = 3, caption = 
-        "One-sample t-tests for comfort–proficiency differences by domain")
-
-# need to make not round to 0 for mean_difference and t_statistic
-# interpret values
-
-
-
-
-# ANOVA Test:
-diff_long <- background %>%
-  select(diff.math, diff.stat, diff.prog) %>%
-  pivot_longer(
-    cols = everything(),
-    names_to = "domain",
-    values_to = "difference"
-  )
-
-
-anova_model <- aov(difference ~ domain, data = diff_long)
-summary(anova_model)
-
-
-TukeyHSD(anova_model)
-
-# Standardizing Process
-background <- background %>%
-  mutate(new.prog.prof = case_when(
-    prog.prof == "beg" ~ 1,
-    prog.prof == "int" ~ 2,
-    prog.prof == "adv" ~ 3
-  ))
-
-background <- background %>%
-  mutate(new.stat.prof = case_when(
-    stat.prof == "beg" ~ 1,
-    stat.prof == "int" ~ 2,
-    stat.prof == "adv" ~ 3
-  ))
-
-background <- background %>%
-  mutate(new.math.prof = case_when(
-    math.prof == "beg" ~ 1,
-    math.prof == "int" ~ 2,
-    math.prof == "adv" ~ 3
-  ))
-prog_diff <- background$new.prog.prof - background$prog.comf
-math_diff <- background$new.math.prof - background$math.comf
-stat_diff <- background$new.stat.prof - background$stat.comf
-
-prog_diff_standardized <- scale(prog_diff)
-math_diff_standardized <- scale(math_diff)
-stat_diff_standardized <- scale(stat_diff)
-
-prog_diff_standardized
-math_diff_standardized
-stat_diff_standardized
-
-# Tidying Dataset
-library(dplyr)
-library(tidyr)
-
-anova_data <- data.frame(
-  participant = 1:nrow(background),  # create an ID for each participant
-  math = as.numeric(math_diff_standardized),
-  stats = as.numeric(stat_diff_standardized),
-  prog = as.numeric(prog_diff_standardized)
-)
-
-long_data <- anova_data %>%
-  pivot_longer(cols = c(math, stats, prog),
-               names_to = "domain",
-               values_to = "std_diff")
-
-aggregate(std_diff ~ domain, data = long_data, mean)
-aggregate(std_diff ~ domain, data = long_data, sd)
-
-summary_aov <- summary(aov(std_diff ~ domain, data=long_data))
-summary_aov
-
-#ANOVA Assumption Checking
-
-# Normality
-qqnorm()
-qqline()
-
-# QQ plot
-
-# Residuals vs. Fitted plot
-
-# interpret values
+# Linear Transformation of Proficiency to be on the same scale as Comfort
 # rescale prof (1-3) to 1-5
 background <- background %>%
   mutate(prof_rescaled_math = (new.math.prof - 1) / (3 - 1) * (5 - 1) + 1,
@@ -132,12 +18,68 @@ anova_data <- data.frame(
   prog = prog_diff
 )
 
-library(tidyr); library(dplyr)
+library(tidyr)
+library(dplyr)
 long_data <- anova_data %>%
   pivot_longer(cols = c(math, stats, prog),
                names_to = "domain",
                values_to = "diff")
 
-# RM ANOVA
-aov_result <- aov(diff ~ domain + Error(participant/domain), data = long_data)
+aov_result <- aov(diff ~ domain, data = long_data)
 summary(aov_result)
+
+# Interpretation of results with Tukey test
+
+TukeyHSD(aov_result)
+
+# Interpretation of finding which two domain means differ from one another
+# Because we got a p-value of 0.179 from our ANOVA, we fail to reject our null
+# hypothesis, and we conclude that there is no statistically significant evidence 
+# that there is a difference among the mean differences across math, statistics, 
+# and programming.
+
+# In regard to the Tukey test, because all p-values were greater than 0.05, we
+# cannot conclude that any pair of means were significant against each other.
+# The confidence intervals all include 0, which shows us that none of the domain
+# gaps differ signficantly from each other.
+
+
+
+# Why We Assume Independence
+# We assume independence in this case because each participant's score on the Likert scale of how 
+# proficient/comfortable they are in each subject is independent of any other participant's score.
+
+
+#ANOVA Assumption Checking
+
+# Normality:
+
+qqnorm(aov_result$residuals)
+qqline(aov_result$residuals)
+
+# Looking at the qqnorm() plot, we can see that the plotted residual points seem
+# to fall far from the normal line towards the tails of the graph. Thus, we are 
+# skeptical whether the assumption of normality is met.
+
+
+shapiro.test(aov_result$residuals)
+
+# A Shapiro–Wilk test on the ANOVA residuals indicated that the assumption of 
+# normality was violated (W = 0.963, p < 0.001). This suggests that the residuals 
+# deviate significantly from a normal distribution. However, since ANOVA is robust 
+# to moderate non-normality with sufficiently large samples, the results can 
+# still be interpreted with caution.
+
+
+
+
+
+# Residuals vs. Fitted plot
+
+plot(aov_result$residuals ~ aov_result$fitted.values)
+
+# In this plot of residuals versus fitted values, we have vertical columns of 
+# data points that correspond to the different treatment groups in this model. 
+# Within each group, we can observe that the residuals are approximately scattered 
+# around 0. This indicates that they have approximately equal variances, 
+# satisfying the ANOVA assumption.
