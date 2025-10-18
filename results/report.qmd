@@ -1,7 +1,7 @@
 ---
-title: "Analysis of class surveys"
-subtitle: "If you want a subtitle put it here"
-author: "List names here"
+title: "Table-Nine's Analysis of the Class Survey Data"
+subtitle: ""
+author: "Aarti Gaye, Calder Glass, Kaitlyn Chihaoui, Sophie Lian"
 date: last-modified
 published-title: "Updated"
 editor: visual
@@ -14,82 +14,240 @@ execute:
   cache: true
 ---
 
-Use this as a template. Keep the headers and remove all other text. Overall, your report may be quite short. When it is complete, render and then push changes to your team repository.
-
 ```{r}
 # load any other packages and read data here
 library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(vtable)
+library(tidyr)
+url <- 'https://raw.githubusercontent.com/pstat197/module-0-class-survey-data-table_nine/main/data/'
+
+background <- paste(url, 'background-clean.csv', sep = '') %>%
+  read_csv()
+
+background <- background %>%
+  mutate(num.prog.prof = case_when(
+    prog.prof == "beg" ~ 1,
+    prog.prof == "int" ~ 2,
+    prog.prof == "adv" ~ 3
+  )) %>% 
+  mutate(num.stat.prof = case_when(
+    stat.prof == "beg" ~ 1,
+    stat.prof == "int" ~ 2,
+    stat.prof == "adv" ~ 3
+  )) %>% 
+  mutate(num.math.prof = case_when(
+    math.prof == "beg" ~ 1,
+    math.prof == "int" ~ 2,
+    math.prof == "adv" ~ 3
+  ))
+
 ```
 
-## Executive summary
+## Executive Summary
 
-Write a one-paragraph abstract summarizing what you did and your findings. It need not be comprehensive; try to highlight the most important or interesting outcomes.
+The interest of this assignment was to examine whether students underestimte or overestimate themselves while self reporting. The idea is to explore the relationship between proficiency and comfort levels of PSTAT197 students in their math, statistics, and programming backgrounds and see whether there is a statistically significant difference between the two. In the intake form proficiency level was from scale had options "beginner, intermediate, and advance" whereas the comfort level ranged from 1 to 5, 5 being very comfortable. To comapre the diffrences between the two, the proficiency levels and comfort levels were standardized. New standard variables and difference variables were created for each subject area. Some initial exploration of the data includes Boxplots of the standardized proficiency vs comfort levels. Late on, we conducted ANOVA to see whether there is a significant difference between the two within each subject area.
 
-## Data description
+## Data Description
 
-Write a brief description of the dataset. Your description should cover how data were obtained, sample characteristics, and measurements taken. It does not need to be exhaustive, but sufficiently detailed to convey a clear high-level understanding of the dataset. You can utilize bullet points or tables if you feel it would help improve clarity.
+The data set was constructed of 51 responses from PSTAT197 students who answered a Google Form. Relevant to this report, the *background.csv* file consisted of responses from participants who were asked to rate their comfort level in the subjects of math, statistics, and programming from 1-3 and their proficiency level in those same subjects from 1-5. Students could input whether they were interested in working on a research project, an industry project, both types of project, or neither of the two. Additionally, the file contained a variable for how many upper division PSTAT classes a given student had taken, where the possible values were in ranges such as "0-2", "3-5", "6-8", and "9+".
 
-## Questions of interest
+## Questions of Interest
 
-Indicate the questions your analysis addresses. These should map one-to-one to your findings. Don't include questions you didn't answer or questions you started with and refined later. If you would rather frame them as goals or tasks rather than questions that is okay; just modify the header appropriately. However you frame what you've done, you may only have two or three items; that is fine. Provide an itemized or numbered list so that the reader can easily identify your objectives.
-
-For example:
-
-> *We sought to understand the relationship between coursework preparation, self-assessed technical abilities, and comfort level with technical skills. We also sought to understand whether the relationships differed depending on having had prior research experience. Our analysis addressed three questions:*
->
-> 1.  *How should the coursework histories of students in the class be ordered from less preparation to extensive preparation?*
-> 2.  *Is coursework preparation associated with increased self-assessed technical skill and comfort within the sample?*
-> 3.  *Does prior research experience appear to be a substitute for coursework preparation with respect to self-assessed technical skill and comfort?*
-
-Notice that the questions are precise but not overly technical.
+The primary goal of the report was to determine whether there was a significant statistical difference between the differences of the standardized proficiency and comfort levels for the subjects of math, statistics, and programming among PSTAT197 students in this class survey.
 
 ## Findings
 
-Summarize your results. Don't try to explain every step you took; focus instead on providing the main data analytic outputs -- tables and figures -- and explaining clearly what they show. Clarify any important decisions you made in obtaining them. You can display codes if you like but it is not necessary.
-
-## Useful tips (remove this section)
-
-Due to the visual editor, most common needs for authoring can be met using menu items in the RStudio IDE. For a comprehensive guide to Quarto, see the [documentation](https://quarto.org/docs/guide/); consult the documentation for anything you can't sort out in the IDE.
-
-### Code chunks
-
-Insert code chunks using the *Insert* drop-down menu or `ctrl + alt + I` . By default in this document, codes will not be shown but results will. If you want to change this behavior, add the chunk option `echo: true` as below.
+In order to even take the difference of the proficiency levels versus the comfort levels for each subject, the proficiency levels had to be converted from the original categorical values of *"beg", "int",* and "*adv"* to integer values of $1$, $2$, and $3$, which is done in the very first code chunk. Before the proficiency levels could even be standardized, the levels had to be linearly transformed as their current state would constantly result in p-values of $1$ when performing the ANOVA test later on with the difference variables.
 
 ```{r}
 #| echo: true
-my_df <- tibble(animal = c('snake', 'gecko'),
-                threatening = c(TRUE, FALSE))
 
-my_df
+# Transforming the proficiency covariates for math, stats, and programming to be on a 1-5 scale and allow for p-values less than 1 when taking the ANOVA test and later Tukey HSD followup test.
+background <- background %>%
+  mutate(prof_rescaled_math = (num.math.prof - 1) / (3 - 1) * (5 - 1) + 1,
+         prof_rescaled_stat = (num.stat.prof - 1) / (3 - 1) * (5 - 1) + 1,
+         prof_rescaled_prog = (num.prog.prof - 1) / (3 - 1) * (5 - 1) + 1)
 ```
-
-Code chunks will be executed in order when the document is rendered, so packages should be loaded at the very beginning of the document
-
-### Rendering tables in markdown
-
-Several functions exist for converting dataframes to markdown tables for nice display. A simple one from the `knitr` package is `knitr::kable()` .
 
 ```{r}
-my_df %>% knitr::kable()
+#| echo: false
+# Standardizing the comfort and rescaled proficiency level covariates for each subject.
+math.prof.mean <- mean(background$prof_rescaled_math)
+math.comf.mean <- mean(background$math.comf)
+math.prof.sd <- sd(background$prof_rescaled_math)
+math.comf.sd <- sd(background$math.comf)
+
+stat.prof.mean <- mean(background$prof_rescaled_stat)
+stat.comf.mean <- mean(background$stat.comf)
+stat.prof.sd <- sd(background$prof_rescaled_stat)
+stat.comf.sd <- sd(background$stat.comf)
+
+prog.prof.mean <- mean(background$prof_rescaled_prog)
+prog.comf.mean <- mean(background$prog.comf)
+prog.prof.sd <- sd(background$prof_rescaled_prog)
+prog.comf.sd <- sd(background$prog.comf)
+
+background <- background %>%
+  mutate(
+    std.math.prof = (prof_rescaled_math - math.prof.mean) / math.prof.sd,
+    std.stat.prof = (prof_rescaled_stat - stat.prof.mean) / stat.prof.sd,
+    std.prog.prof = (prof_rescaled_prog - prog.prof.mean) / prog.prof.sd,
+    
+    std.math.comf = (math.comf - math.comf.mean) / math.comf.sd,
+    std.stat.comf = (stat.comf - stat.comf.mean) / stat.comf.sd,
+    std.prog.comf = (prog.comf - prog.comf.mean) / prog.comf.sd
+  )
+
+
 ```
 
-### Figures
-
-To include any figures not generated by code chunks, use *Insert \> Figure / Image* or `![CAPTION](path/file.ext)` .
-
-Most of the time code chunks producing plots will render fine. However, to adjust sizing or alignment, use the chunk options `fig-width` and `fig-height` . Captions can be added with `fig-cap` .
+After standardization of proficiency and comfort level covariates was complete, the difference variables were constructed.
 
 ```{r}
-#| fig-width: 4
-#| fig-height: 3
-#| fig-align: left
-#| fig-cap: A terrible plot.
+#| echo: true
 
-my_df %>% 
-  ggplot(aes(x = animal, y = threatening)) + 
-  geom_col()
+# A second set of difference variables were created without standardization, so they could be used for the ANOVA test and not yield a p-value of 1
+background <- background %>%
+  mutate(
+    diff.math = std.math.comf - std.math.prof,
+    diff.stat = std.stat.comf - std.stat.prof,
+    diff.prog = std.prog.comf - std.prog.prof,
+    diff.math_2 = prof_rescaled_math - math.comf,
+    diff.stat_2 = prof_rescaled_stat - stat.comf,
+    diff.prog_2 = prof_rescaled_prog - prog.comf
+  )
+
 ```
 
-### Links
+After constructing the difference variables and standardizing them, a summary table and some visualizations of the difference variables for the three subjects were performed before the ANOVA test.
 
-To include any hyperlinks, use `[display text](url)` .
+```{r}
+# summary table for the difference variables for all three areas
+
+st(background, vars = c("diff.math", "diff.stat", "diff.prog"))
+```
+
+The table shows that after scaling and standardizing, the difference variables for math, statistics, and programming have relatively similar means of $3.5 * 10^{-10}$, $4.7 * 10^{-10}$, and $1.5 * 10^{-10}$ respectively. The math and programming difference variables have a standard deviation of $1.1$ while the statistics difference variable has a standard deviation of $0.8$. The maximums of the difference variables are very close at around $2.3$ to $2.4$, while the minimums are a bit more spread out with $-2.3$, $-2$, and $-2.4$ for math, stats, and programming. The interquartile ranges for the difference variables ranged in length from $1.28$ for the math difference variable to $1.34$ for the programming difference variable.
+
+```{r}
+## Grouped Boxplots: Each area has two boxplots (one for proficiency and one for comf)
+background_long <- background %>%
+  select(std.math.prof, std.stat.prof, std.prog.prof,
+         std.math.comf, std.stat.comf, std.prog.comf) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = c("measure", "domain"),
+    names_pattern = "std\\.(.*)\\.(.*)",
+    values_to = "value"
+  )
+
+ggplot(background_long, aes(x = domain, y = value, fill = measure)) +
+  geom_boxplot(alpha = 0.7, outlier.shape = NA) +
+  labs(
+    title = "Standardized Proficiency vs Comfort by Domain",
+    x = "Domain",
+    y = "Standardized Value (Z-score)",
+    fill = "Subject Area"
+  ) +
+  theme_bw()
+
+```
+
+The box plots shows that mathematics and programming have a lower median Z-score for the standardized proficiency levels than the standardized comfort levels. The spread of the Z-scores for the standardized comfort levels versus the standardized proficiency levels suggests that PSTAT197 students' evaluation of their comfort in subjects like math, statistics, and programming fluctuates more than the evaluation of their proficiency at those subjects. This difference in the spreads of the Z-scores should be investigated further.
+
+```{r}
+# Boxplots of differences 
+# directly show whether people generally over- or underestimate their ability.
+
+diff_long <- background %>%
+  select(diff.math, diff.stat, diff.prog) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "domain",
+    values_to = "difference"
+  )
+
+ggplot(diff_long, aes(x = domain, y = difference, fill = domain)) +
+  geom_boxplot(alpha = 0.8) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(
+    title = "Difference Between Comfort and Proficiency (Standardized)",
+    x = "Domain",
+    y = "Comfort – Proficiency (Z-score Difference)"
+  ) +
+  theme_bw()
+
+```
+
+The dashed line means that the difference between standardized comfort and proficiency was $0$, so any positive difference means a higher score of comfort/confidence in the given subject vs proficiency in that subject. While a negative difference indicates a higher score in proficiency vs comfort. The box plots show that the spread of Z-scores for each difference variable are fairly similar, with the exception of the statistics difference variable which has a lower median Z-score and a greater minimum Z-score.
+
+Between the two major box plots, a question to further explore would be whether PSTAT197 students in the class are over or under confident in their background subjects, based on the reported comfort and proficiency levels for each subject.
+
+Finally, the ANOVA test was performed to answer the primary question of the analysis.
+
+```{r}
+# Build long data and run repeated-measures ANOVA
+anova_data <- data.frame(
+  participant = seq_len(nrow(background)),
+  math = background$diff.math_2,
+  stats = background$diff.stat_2,
+  prog = background$diff.prog_2
+)
+
+long_data <- anova_data %>%
+  pivot_longer(cols = c(math, stats, prog),
+               names_to = "domain",
+               values_to = "diff")
+
+aov_result <- aov(diff ~ domain, data = long_data)
+summary(aov_result)
+TukeyHSD(aov_result)
+```
+
+Because the p-value was $0.179 > \alpha = 0.001$, the report fails to reject the null hypothesis that there is no statistically significant difference between the difference variables of proficiency vs comfort levels of mathematics, statistics, and programming.
+
+The Tukey test reflects this conclusion because the adjusted p-values for the pairs of difference variables are all greater than $\alpha=0.001$.
+
+The confidence intervals of the averages of the difference variables were also taken.
+
+```{r}
+ci_results <- long_data %>%
+  group_by(domain) %>%
+  summarise(
+    mean_diff = mean(diff),
+    sd = sd(diff),
+    n = n(),
+    se = sd / sqrt(n),
+    lower_CI = mean_diff - qt(0.975, df = n - 1) * se,
+    upper_CI = mean_diff + qt(0.975, df = n - 1) * se
+  )
+
+knitr::kable(ci_results, digits = 3, caption = 
+               "95% Confidence Intervals for Comfort–Proficiency Differences by Domain")
+```
+
+Because $0$ is included in all three of the confidence intervals, there is no significant statistical difference between the averages of the difference variables for math, stats, and programming. This lines up with the ANOVA test and the Tukey test.
+
+To make sure the data is appropriate for the ANOVA test, the assumptions of normality, independence, and equal variances were tested.
+
+The assumption of independence is true since the responses themselves were independent of each other. Additionally, any student's evaluation of their proficiency and comfort levels at the given subjects is inherently independent of another student's evaluation of those same attributes.
+
+```{r}
+qqnorm(aov_result$residuals)
+qqline(aov_result$residuals)
+shapiro.test(aov_result$residuals)
+```
+
+The residuals don't follow the qqline, so the assumption of normality is violated.
+
+The p-value for the residuals is $0.0003785 < \alpha  = 0.001$, so the assumption of normality is again violated. However, the ANOVA test could still work as the one-way ANOVA test is robust towards violations of the normality assumption.
+
+```{r}
+plot(aov_result$residuals ~ aov_result$fitted.values)
+```
+
+The vertical columns of data points represent each difference variable. They are all symmetric around $\text{residual} = 0$ line, so the error variances are equal.
+
+Thus, the ANOVA test was an appropriate test for the given data set and we have found statistically significant evidence that there exists some discrepancies between comfort and proficiency levels while self reporting. This warrants for further investigation into the backgrounds and whether we can predict depending on other variables the degree of this discrepancy for any given individual.
