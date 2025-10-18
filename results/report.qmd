@@ -47,7 +47,7 @@ background <- background %>%
 
 ## Executive Summary
 
-The interest of this assignment was to examine the relationship between proficiency and comfort levels of PSTAT197 students in their math, statistics, and programming backgrounds. The proficiency levels and comfort levels were standardized in order to construct difference variables, where each variable was the difference between the proficiency and comfort levels for the given subject. Boxplots of the standardized proficiency vs comfort for the given subject were generated, where it was found that the median Z-scores for proficiency in statistics and programming tended to be higher than the median Z-scores for comfort in the same subjects. An ANOVA test comparing the difference variables for each subject found that there was no statistically significant difference between the differences of proficiency versus comfort for each subject.
+The interest of this assignment was to examine whether students underestimte or overestimate themselves while self reporting. The idea is to explore the relationship between proficiency and comfort levels of PSTAT197 students in their math, statistics, and programming backgrounds and see whether there is a statistically significant difference between the two. In the intake form proficiency level was from scale had options "beginner, intermediate, and advance" whereas the comfort level ranged from 1 to 5, 5 being very comfortable. To comapre the diffrences between the two, the proficiency levels and comfort levels were standardized. New standard variables and difference variables were created for each subject area. Some initial exploration of the data includes Boxplots of the standardized proficiency vs comfort levels. Late on, we conducted ANOVA to see whether there is a significant difference between the two within each subject area.
 
 ## Data Description
 
@@ -55,13 +55,11 @@ The data set was constructed of 51 responses from PSTAT197 students who answered
 
 ## Questions of Interest
 
-The primary goal of the report was to determine whether there was a significant statistical difference between the differences of the standardized proficiency and comfort levels for the subjects of math, statistics, and programming among PSTAT197 students in this class survey. An additional objective of the report was to examine the relationship between a PSTAT197 student's domain/background experience and their
+The primary goal of the report was to determine whether there was a significant statistical difference between the differences of the standardized proficiency and comfort levels for the subjects of math, statistics, and programming among PSTAT197 students in this class survey.
 
 ## Findings
 
-Summarize your results. Don't try to explain every step you took; focus instead on providing the main data analytic outputs -- tables and figures -- and explaining clearly what they show. Clarify any important decisions you made in obtaining them. You can display codes if you like but it is not necessary.
-
-In order to even take the difference of the proficiency levels versus the comfort levels for each subject, the proficiency levels had to be converted from the original categorical values of *"beg", "int",* and "*adv"* to integer values of $1$, $2$, and $3$. Before the proficiency levels could even be standardized, the levels had to be linearly transformed as their current state would constantly result in p-values of $1$ when performing the ANOVA test later on with the difference variables.
+In order to even take the difference of the proficiency levels versus the comfort levels for each subject, the proficiency levels had to be converted from the original categorical values of *"beg", "int",* and "*adv"* to integer values of $1$, $2$, and $3$, which is done in the very first code chunk. Before the proficiency levels could even be standardized, the levels had to be linearly transformed as their current state would constantly result in p-values of $1$ when performing the ANOVA test later on with the difference variables.
 
 ```{r}
 #| echo: true
@@ -157,7 +155,7 @@ ggplot(background_long, aes(x = domain, y = value, fill = measure)) +
 
 ```
 
-The box plots shows that mathematics and programming have a lower median Z-score for the standardized proficiency levels than the standardized comfort levels. The spread of the Z-scores for the standardized comfort levels versus the standardized proficiency levels suggests that PSTAT197 students' evaluation of their comfort in subjects like math, statistics, and programming fluctuates more than the evaluation of their proficiencies at those subjects. This difference in the spreads of the Z-scores should be investigated further.
+The box plots shows that mathematics and programming have a lower median Z-score for the standardized proficiency levels than the standardized comfort levels. The spread of the Z-scores for the standardized comfort levels versus the standardized proficiency levels suggests that PSTAT197 students' evaluation of their comfort in subjects like math, statistics, and programming fluctuates more than the evaluation of their proficiency at those subjects. This difference in the spreads of the Z-scores should be investigated further.
 
 ```{r}
 # Boxplots of differences 
@@ -252,4 +250,4 @@ plot(aov_result$residuals ~ aov_result$fitted.values)
 
 The vertical columns of data points represent each difference variable. They are all symmetric around $\text{residual} = 0$ line, so the error variances are equal.
 
-Thus, the ANOVA test was an appropriate test for the given data set.
+Thus, the ANOVA test was an appropriate test for the given data set and we have found statistically significant evidence that there exists some discrepancies between comfort and proficiency levels while self reporting. This warrants for further investigation into the backgrounds and whether we can predict depending on other variables the degree of this discrepancy for any given individual.
